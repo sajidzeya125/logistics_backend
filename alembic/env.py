@@ -25,10 +25,33 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
+
+def include_object(object, name, type_, reflected, compare_to):
+    """
+    Exclude PostGIS and other extension-managed tables from migrations.
+    
+    This prevents Alembic from trying to manage system tables that are
+    created and managed by database extensions like PostGIS.
+    """
+    # Exclude spatial extension system tables
+    if type_ == "table" and name in [
+        'spatial_ref_sys',
+        'geometry_columns',
+        'geography_columns',
+        'raster_columns',
+        'raster_overviews',
+    ]:
+        return False
+    
+    # Exclude extension-managed indexes
+    if type_ == "index" and (
+        name.startswith('idx_') or
+        name.startswith('gpkg_') or
+        name.startswith('rtree_')
+    ):
+        return False
+    
+    return True
 
 
 def run_migrations_offline() -> None:
@@ -49,6 +72,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -70,7 +94,9 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            include_object=include_object,
         )
 
         with context.begin_transaction():

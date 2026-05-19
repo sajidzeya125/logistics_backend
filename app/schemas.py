@@ -44,12 +44,21 @@ class DriverOut(BaseModel):
 
 
 # Location schemas
-class LocationBase(BaseModel):
+class LocationCreate(BaseModel):
+    latitude: float=Field(..., ge=-90, le=90)
+    longitude: float=Field(..., ge=-180, le=180)
+    address: str
+    city: str
+    postal_code: Optional[str] = None
+    
+
+class LocationOut(BaseModel):
+    id: int
     latitude: float
     longitude: float
     address: str
     city: str
-    postal_code: Optional[str] = None
+    postal_code: Optional[str]
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
