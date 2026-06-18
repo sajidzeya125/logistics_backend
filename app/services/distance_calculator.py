@@ -6,8 +6,9 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     on the Earth specified in decimal degrees.
     """
     # Convert decimal degrees to radians
+    lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-    
+
     # Haversine formula
     dlon = lon2 - lon1 
     dlat = lat2 - lat1 

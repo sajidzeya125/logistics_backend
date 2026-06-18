@@ -21,7 +21,7 @@ def get_location(location_id: int, db: Session = Depends(get_db), current_user =
 
 @router.get("/",response_model=list[schemas.LocationOut])
 def get_all_locations(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=100), db: Session = Depends(get_db), current_user = Depends(auth2.get_current_user)):
-    return crud.location_crud.get_locations(db, skip=skip, limit=limit)
+    return crud.location_crud.get_all_locations(db, skip=skip, limit=limit)
 
 
 @router.get("/nearby/search", response_model=list[dict])
@@ -30,7 +30,7 @@ def find_nearby_locations(latitude: float = Query(..., ge=-90, le=90),
                           radius_km: float = Query(5.0, gt=0),
                           db: Session = Depends(get_db),
                           current_user = Depends(auth2.get_current_user)):
-    nearby = crud.location_crud.find_nearby_loacations(db, latitude, longitude, radius_km)
+    nearby = crud.location_crud.find_nearby_locations(db, latitude, longitude, radius_km)
     return [
         {
             "id": item['location'].id,

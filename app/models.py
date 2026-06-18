@@ -39,7 +39,6 @@ class Location(Base):
     __tablename__ = "locations"
 
     id = Column(Integer, primary_key=True, index=True)
-    driver_id = Column(Integer, ForeignKey('drivers.id'), nullable=False)
     latitude = Column(String, nullable=False)
     longitude = Column(String, nullable=False)
     address = Column(String, nullable=False)

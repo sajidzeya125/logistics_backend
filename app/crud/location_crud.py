@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from . import models, schemas
+from app import models, schemas
 from app.services.distance_calculator import haversine_distance
 from sqlalchemy import and_
 
@@ -26,7 +26,7 @@ def get_all_locations(db: Session, skip: int = 0, limit: int = 10) -> list:
 
 
 
-def find_nearby_loacations(db: Session, latitude: float, longitude: float, radius_km: float = 5.0) -> list:
+def find_nearby_locations(db: Session, latitude: float, longitude: float, radius_km: float = 5.0) -> list:
     locations = db.query(models.Location).all()
     nearby = []
     for location in locations:
@@ -38,7 +38,7 @@ def find_nearby_loacations(db: Session, latitude: float, longitude: float, radiu
 
 
 
-def update_location(db: Session, location_id: int, location_update: schemas.LocationUpdate) -> models.Location:
+def update_location(db: Session, location_id: int, location_update: schemas.LocationCreate) -> models.Location:
     db_location = get_location(db, location_id)
     if db_location:
         db_location.latitude = location_update.latitude
